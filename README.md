@@ -1,2 +1,2 @@
 安装postfix
-安装rabbitmq
+安装rabbitmq 
