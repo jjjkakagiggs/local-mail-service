@@ -1,1 +1,2 @@
-pass todo
+安装postfix
+安装rabbitmq
