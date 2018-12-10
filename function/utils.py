@@ -2,8 +2,8 @@ import smtplib
 import threading,json
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-# def pretreat(TEXT):
-#     TEXT = TEXT.replace('{username}','')
+
+sem=threading.Semaphore(10) #上限开10线程发邮件
 
 def send_async_email(FROM,TO,SUBJECT,TEXT):
     SERVER = 'localhost'
@@ -19,8 +19,9 @@ def send_async_email(FROM,TO,SUBJECT,TEXT):
     server.quit()
 
 def send_mail_fuc(FROM,TO,SUBJECT,TEXT):
-    s=threading.Thread(target=send_async_email,args=[FROM,TO,SUBJECT,TEXT])
-    s.start()
+    with  sem:
+        s=threading.Thread(target=send_async_email,args=[FROM,TO,SUBJECT,TEXT])
+        s.start()
     # print(pretreat(TEXT))
 
 # for i in range(1):
@@ -36,6 +37,7 @@ def read_callback(ch, method, properties, body):
     info_dict=json.loads(body)
     FROM, TO, SUBJECT, TEXT=info_dict['FROM'],info_dict['TO'],info_dict['SUBJECT'],info_dict['TEXT']
     print(FROM, TO, SUBJECT, TEXT)
+    send_mail_fuc(FROM,[].append(TO),SUBJECT,TEXT)
 
 def mq_read_start(channel):
     channel.basic_consume(read_callback,

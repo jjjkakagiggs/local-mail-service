@@ -12,6 +12,7 @@ channel = connection.channel()
 channel.queue_declare(queue='mail_balance',durable=True)# 声明queue
 mrs=threading.Thread(target=mq_read_start,args=[channel,])
 mrs.start()
+
 @api_view(['GET','POST','DELETE'])
 def mail_service(request):
     if request.method=='GET':
@@ -42,4 +43,4 @@ def send_mail(request):
         TEXT=request.POST.get('Text')
         
         mq_write(channel,FROM,TO,SUBJECT,TEXT)
-        return HttpResponse('sss')
+        return HttpResponse('success')
