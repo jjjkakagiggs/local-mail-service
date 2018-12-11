@@ -22,8 +22,7 @@ def send_mail_fuc(FROM,TO,SUBJECT,TEXT):
     with  sem:
         s=threading.Thread(target=send_async_email,args=[FROM,TO,SUBJECT,TEXT])
         s.start()
-    # print(pretreat(TEXT))
-
+       
 # for i in range(1):
 #     send_mail_fuc('xw@xwtest.com',['1372241206@qq.com'],"hello",'wsg')
 def mq_write(channel,FROM,TO,SUBJECT,TEXT):
@@ -37,7 +36,7 @@ def read_callback(ch, method, properties, body):
     info_dict=json.loads(body)
     FROM, TO, SUBJECT, TEXT=info_dict['FROM'],info_dict['TO'],info_dict['SUBJECT'],info_dict['TEXT']
     print(FROM, TO, SUBJECT, TEXT)
-    send_mail_fuc(FROM,[].append(TO),SUBJECT,TEXT)
+    # send_mail_fuc(FROM,[TO],SUBJECT,TEXT)
 
 def mq_read_start(channel):
     channel.basic_consume(read_callback,

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from function.utils import send_mail_fuc,mq_write,mq_read_start
+from function.utils import send_mail_fuc,mq_write
 from django.http import HttpResponse,JsonResponse
 import json,pika,threading
 # Create your views here.
@@ -10,8 +10,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
     '127.0.0.1',5672,'/',credentials))
 channel = connection.channel()
 channel.queue_declare(queue='mail_balance',durable=True)# 声明queue
-mrs=threading.Thread(target=mq_read_start,args=[channel,])
-mrs.start()
+
 
 @api_view(['GET','POST','DELETE'])
 def mail_service(request):
