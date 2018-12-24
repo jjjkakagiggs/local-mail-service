@@ -1,7 +1,8 @@
-import smtplib
+import smtplib,pika
 import threading,json
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
 
 sem=threading.Semaphore(10) #上限开10线程发邮件
 
@@ -30,7 +31,8 @@ def mq_write(channel,FROM,TO,SUBJECT,TEXT):
     info_json = json.dumps(info_dict)
     channel.basic_publish(exchange='',
                           routing_key='mail_balance',
-                          body=info_json)
+                          body=info_json,
+                          properties=pika.BasicProperties(delivery_mode = 2))
 
 def read_callback(ch, method, properties, body):
     info_dict=json.loads(body)

@@ -10,7 +10,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
     '127.0.0.1',5672,'/',credentials))
 channel = connection.channel()
 channel.queue_declare(queue='mail_balance',durable=True)# 声明queue
-
+mutex=threading.Lock()
 
 @api_view(['GET','POST','DELETE'])
 def mail_service(request):
@@ -36,10 +36,12 @@ def domain_management(request):
 @api_view(['POST'])
 def send_mail(request):
     if request.method=='POST':
+        print(request.POST)
         FROM=request.POST.get('From')
         TO=request.POST.get('To')
         SUBJECT=request.POST.get('Subject')
         TEXT=request.POST.get('Text')
-        
+        mutex.acquire()
         mq_write(channel,FROM,TO,SUBJECT,TEXT)
+        mutex.release()
         return HttpResponse('success')
